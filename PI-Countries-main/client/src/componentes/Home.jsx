@@ -1,48 +1,144 @@
 import React from "react";
 import {useState,useEffect} from 'react';
-import {useDispach,useSelector}from 'react-redux';
-import { getCountries } from "../acctions";
+import {useDispatch,useSelector}from 'react-redux';
+import { Link } from "react-router-dom";
+import { getCountries , 
+        filterContriesByContinent,
+        getActivities,
+        filterByActivity,
+        filterByPopulation,
+        orderByName} from "../acctions";
+import Card from './Card'
+import Paginado from "./Paginado";
+import SearchBar from "./SearchBar";
+
+import style from "./Styles/Home.module.css"
 
 export default function Home(){
-    const dispach=useDispach();
-    const allCountries=useSelector((state)=>state.countries)
+    const dispatch=useDispatch();
+    const allCountries=useSelector((state)=>state.countries);
+    const allActivities=useSelector((state)=>state.activities);
+   
+    const [order, setOrder] = useState("");
+    //para paginado //
+    const [currentPage,setCurrentPage]=useState(1);
+    const [countriesPage,setCountriesPage]= useState(9);
+    const indexOfLastCountry=currentPage*countriesPage;
+    const indexOfFirstCountri=indexOfLastCountry-countriesPage;
+    const currentCountry=allCountries.slice(indexOfFirstCountri,indexOfLastCountry);
+
+    const paginado = (pagina)=>{
+        setCurrentPage(pagina);
+    }
 
     useEffect(()=>{
-        dispach(getCountries());
+        dispatch(getCountries());
+        dispatch(getActivities());
     },[])
 
+    {/*Funciones handles*/}
     function handleClick(e){
         e.preventDefault();
-        dispach(getCountries());
+        dispatch(getCountries());
     }
-    return (
-        <div>
-            <link to ='/activities'> Crear Actividad </link>
-            <h1>Paises</h1>
-            <button onClick={e=>{handleClick(e)}}>
-                Volver a cargar todos los piases
-            </button>
 
-            <div>
-                <select>
+    function handleFilterStatus(e){
+        
+        dispatch(filterContriesByContinent(e.target.value))
+        setCurrentPage(1);
+        
+    }
+    function handleFilterActivities(e){
+        dispatch(filterByActivity(e.target.value))
+        setCurrentPage(1);
+    }
+
+    function handleFilterPopulation(e){
+        e.preventDefault()
+        dispatch(filterByPopulation(e.target.value))
+        setCurrentPage(1);
+        setOrder(`Ordered-${e.target.value}`);
+    }
+    function handleOrderName(e){
+        e.preventDefault()
+        dispatch(orderByName(e.target.value))
+        setCurrentPage(1);
+        setOrder(`Ordered-${e.target.value}`);
+    }
+
+    return (
+        <div className= {style.all}>
+                    <h1 className = {style.title}>Paises</h1>
+                    <Link  className= {style.title} to ='/activity'> Crear Actividad </Link>
+            <div className = {style.nav}>
+                <div className={style.buttons} >
+
+                    <button onClick={e=>{handleClick(e)}}>
+                        Volver a cargar todos los piases
+                    </button>
+
+                </div>
+                <div className={style.toAlign2}>
+                    <SearchBar/>
+                </div>
+                
+
+            </div>
+            <div >
+                {/*ordenar: A-Z Z-A  && poblacion Mayor menor*/}
+                <select onChange = {e=>{handleOrderName(e)}}>
+                    <option>-Name-</option>
                     <option value= "asc">Ascendente</option>
                     <option value = "desc">Descendente</option>
 
                 </select>
-                <select>
-                    <option value = "all">Todos</option>
-                    <option value = "americaN">America del Norte</option>
-                    <option value = "americaS">America del Sur</option>
-                    <option value = "afri">Afica</option>
-                    <option value = "ocea">Oceania</option>
-                    <option value = "asia">Asia</option>
-                    <option value = "eur">Europa</option>
+                <select onChange = { e => {handleFilterPopulation(e)}}>
+                    <option>-Population-</option>
+                    <option value= "mayor">Mayor Poblacion</option>
+                    <option value = "menor">Menor Poblacion</option>
+
                 </select>
-                <select>
-                <option value = "all">Todos</option>
-                <option value = "create">Creados</option>
+                {/*filtrar por :*/}
+                <select onChange = {e => {handleFilterStatus(e)}}>
+                    <option value = "all">-Continente-</option>
+                    <option value = "Antarctic">Antarctico</option>
+                    <option value = "Americas">Americas</option>
+                    <option value = "Africa">Afica</option>
+                    <option value = "Oceania">Oceania</option>
+                    <option value = "Asia">Asia</option>
+                    <option value = "Europe">Europa</option>
+                </select>
+                {/*filtrar por actividades*/}
+                <select onChange = {e=>{handleFilterActivities(e)}}>
+                <option value="all">-Activity-</option>
+                 {allActivities &&
+                     allActivities.map((el) => {
+                  return (
+                    <option key={el.id} value={el.name}>
+                      {el.name}
+                    </option>
+                  );
+                })}
                 
                 </select>
+
+                <Paginado 
+                page={currentPage}
+                countriesPages={countriesPage}
+                allCountries={allCountries.length}
+                paginado={paginado}
+                />
+                <div className={style.toAlign}>
+                    <div className={style.cards}>
+                        {
+                            currentCountry?.map( e=>(
+                                <Card name={e.name} image = {e.image} continente ={e.continente}  population ={e.population} key={e.id} ></Card>
+                            ))
+                        }
+
+                    </div>
+                </div>
+
 
             </div>
         </div>

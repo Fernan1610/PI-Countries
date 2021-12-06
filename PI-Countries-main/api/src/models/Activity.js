@@ -18,23 +18,22 @@ module.exports = (sequelize) => {
     
    
     dificultad: {
-      type: DataTypes.ENUM("1","2","3","4","5"),
+      type:DataTypes.ARRAY(DataTypes.ENUM("1","2","3","4","5")),
+     // type: DataTypes.STRING,
       allowNull: true
     },
+    
     duration: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,        
       },
       season: {
-        type: DataTypes.ENUM('Summer', 'Autumn', 'Spring', 'Winter'),
+        type:DataTypes.ARRAY(DataTypes.ENUM('Summer', 'Autumn', 'Spring', 'Winter')),
+        
         allowNull: true,
       },      
     
-    createdInDb: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValues: true,
-    },
+   
   },
     {
       timestamps: false 

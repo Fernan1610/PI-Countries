@@ -1,0 +1,100 @@
+.input{
+    height:2rem;
+    border-radius: 10px;
+}
+
+.homeButton{
+    height:2.5rem;
+    width:5rem;
+    border-radius: 100px;
+
+    color:white;
+    background-color: #EE9B00;
+    font-size:1rem;
+    font-weight:900;
+}
+.homeButton:hover{
+    color:#023047;
+    border-color:#023047;
+    background-color: #EE9B00;
+}
+
+.alignHomeButton{
+    display: flex;
+    justify-content:flex-start;
+    margin-top:1rem;
+    margin-left:10rem;
+}
+
+.all{
+    color: #EE9B00;
+    font-weight: 800;
+}
+.form{
+    display:flex;
+    flex-direction:column;
+    height: 18rem;
+}
+.error{
+    color:red;
+    font-size: medium;
+    font-weight:400;
+    margin-left:2px;
+}
+.body{
+    background-color: rgb(8, 135, 194);
+    width: 40rem;
+    height: 50rem;
+    position: inherit;
+    display: inline-block;
+}
+.inputCountry{
+    
+    display: inline-block;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.buttonCrear{
+    height:3.5rem;
+    width:8rem;
+    border-radius: 100px;
+
+    color:white;
+    background-color: #EE9B00;
+    font-size:1rem;
+    font-weight:900;
+}
+.buttonCrear:hover{
+    color:#023047;
+    border-color:#023047;
+    background-color: #EE9B00;
+}
+.inputname{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.buttonCountry{
+    height:2rem;
+    width:2rem;
+    border-radius: 100px;
+
+    color:white;
+    background-color: #EE9B00;
+    font-size:1rem;
+    font-weight:900;
+}
+.buttonCountry:hover{
+    color:#023047;
+    border-color:#023047;
+    background-color: #EE9B00;
+}
+
+.divCountry{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+}

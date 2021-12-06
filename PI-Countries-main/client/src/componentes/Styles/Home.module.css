@@ -1,0 +1,48 @@
+html{
+    
+    background:url(../../image/BackGraund2.jpg);
+}
+.all{
+    background-position: top;
+    background-size: cover;
+    height: 46rem;
+    padding-top: 1rem;
+    padding-bottom: 2.4rem;
+}
+
+.title{
+    color:#EE9B00;
+}
+.nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-top: 2rem;
+}
+
+.buttons{
+    margin-top: 1rem;
+    justify-content: space-around;
+}
+
+.filters{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    color:#EE9B00;
+    font-weight: 900;
+
+}
+.cards{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+}
+.toAlign{
+    display:flex;
+    justify-content:center;
+}
+.toAlign2{
+    display:flex;
+    justify-content:center;
+}

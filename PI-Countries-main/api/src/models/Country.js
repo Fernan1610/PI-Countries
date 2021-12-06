@@ -35,11 +35,7 @@ module.exports = (sequelize) => {
     population: {
       type: DataTypes.INTEGER,
     },
-    createdInDb: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValues: true,
-    },
+   
   },
     {
       timestamps: false 

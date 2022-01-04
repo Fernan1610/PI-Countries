@@ -58,7 +58,7 @@
     height:3.5rem;
     width:8rem;
     border-radius: 100px;
-
+    
     color:white;
     background-color: #EE9B00;
     font-size:1rem;
@@ -97,4 +97,9 @@
     justify-content: space-between;
     align-items: center;
     align-content: center;
+}
+
+.divButtonCrear{
+    display: flex;
+    justify-content: center;
 }

@@ -16,7 +16,7 @@ export default function Paginado ({pages,countriesPages,allCountries,paginado}){
                 {
                     pagesNumber && pagesNumber.map((number) =>
                        (   
-                           <li className = {number==pages?style.actualPage:style.items} key ={number} >
+                           <li className = {number===pages?style.actualPage:style.items} key ={number} >
                              <a onClick= {()=>paginado(number)}>{number}</a>
                                 {/* <li className = 'number' key ={number}>
                                 </li> */}

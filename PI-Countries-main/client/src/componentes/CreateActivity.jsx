@@ -25,7 +25,7 @@ export default function CreateActivity(){
     const dispatch= useDispatch();
     const [Error, setError] = useState({});
     const country= useSelector((state)=>state.countries)
-
+    
     const [input,setInput]=useState({
         name: "",
         dificultad:"",
@@ -72,17 +72,23 @@ export default function CreateActivity(){
     }
 
     function handleSubmit(e){
+
         e.preventDefault();
-        console.log(input)
-        dispatch(postActividad(input))
-        alert("Actividad Creada con exito!")
-        setInput({
-            name: "",
-            dificultad:"",
-            duration: "",
-            season:[],
-            countries:[]
-        })
+        if(input.name){
+
+            console.log(input)
+            dispatch(postActividad(input))
+            alert("Actividad Creada con exito!")
+            setInput({
+                name: "",
+                dificultad:"",
+                duration: "",
+                season:[],
+                countries:[]
+            })
+        }else{
+            alert("No se completaron los campos")
+        }
       
     }
 
@@ -168,7 +174,7 @@ export default function CreateActivity(){
                         {
                             country.map((el) => {
                                 return (
-                                    <option key={el.id} value={el.name}>
+                                    <option key={el.id} value={el.id}>
                                     {el.name}
                                     </option>
                                 );
@@ -178,8 +184,10 @@ export default function CreateActivity(){
                     </div>
                     {/* <li>{
                     input.countries.map(el =>el+",")}</li> */}
+                    <div className ={style.divButtonCrear}>
+                        <button type = 'submit ' className= {style.buttonCrear} > Crear Actividad </button>
 
-                    <button type = 'submit ' className= {style.buttonCrear} > Crear Actividad </button>
+                    </div>
                 </form>
                 {
                     input.countries.map( el=>

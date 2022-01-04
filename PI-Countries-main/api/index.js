@@ -18,10 +18,18 @@
 //                       `=---='
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const server = require('./src/app.js');
-const { conn } = require('./src/db.js');
+const { conn ,Country} = require('./src/db.js');
+//const Country = require('./src/models/Country.js');
+const {getApiInfo}=require('./src/routes/controler.js')
+const peticionApi= async function(){
+ const paisesEnBD=await getApiInfo();
+ const aux=await Country.bulkCreate(paisesEnBD)
+}
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
+  //const aux=await Country.bulkCreate(getApiInfo())
+  peticionApi()
   server.listen(3001, () => {
     console.log('%s listening at 3001'); // eslint-disable-line no-console
   });

@@ -7,7 +7,8 @@ import { getCountries ,
         getActivities,
         filterByActivity,
         filterByPopulation,
-        orderByName} from "../acctions";
+        orderByName,
+    filterByArea} from "../acctions";
 import Card from './Card'
 import Paginado from "./Paginado";
 import SearchBar from "./SearchBar";
@@ -33,8 +34,12 @@ export default function Home(){
 
     useEffect(()=>{
         dispatch(getCountries());
+    },[dispatch])
+    
+    useEffect(()=>{
+        
         dispatch(getActivities());
-    },[])
+    },[dispatch])
 
     {/*Funciones handles*/}
     function handleClick(e){
@@ -65,7 +70,14 @@ export default function Home(){
         setCurrentPage(1);
         setOrder(`Ordered-${e.target.value}`);
     }
+    function handleArea(e){
+        e.preventDefault();
+        dispatch(filterByArea(e.target.value))
+        setCurrentPage(1)
+        setOrder(`Ordered-${e.target.value}`);
 
+
+    }
     return (
         <div className= {style.all}>
                     <h1 className = {style.title}>Paises</h1>
@@ -77,6 +89,8 @@ export default function Home(){
                         Volver a cargar todos los piases
                     </button>
 
+                    <Link to='/'><button> volver al landing</button></Link>
+
                 </div>
                 <div className={style.toAlign2}>
                     <SearchBar/>
@@ -85,6 +99,11 @@ export default function Home(){
 
             </div>
             <div >
+                <select onChange={e=>handleArea(e)}>
+                <option value="All">Area</option>
+                    <option value="mayor">Menor Area</option>
+                    <option value="menor">Mayor Area</option>
+                </select>
                 {/*ordenar: A-Z Z-A  && poblacion Mayor menor*/}
                 <select onChange = {e=>{handleOrderName(e)}}>
                     <option>-Name-</option>
@@ -111,14 +130,9 @@ export default function Home(){
                 {/*filtrar por actividades*/}
                 <select onChange = {e=>{handleFilterActivities(e)}}>
                 <option value="all">-Activity-</option>
-                 {allActivities &&
-                     allActivities.map((el) => {
-                  return (
-                    <option key={el.id} value={el.name}>
-                      {el.name}
-                    </option>
-                  );
-                })}
+                 {
+                    allActivities && allActivities.map((el) =>  <option key={el.id} value={el.name}> {el.name}</option>)
+                 }
                 
                 </select>
 
@@ -132,7 +146,7 @@ export default function Home(){
                     <div className={style.cards}>
                         {
                             currentCountry?.map( e=>(
-                                <Card name={e.name} image = {e.image} continente ={e.continente}  population ={e.population} key={e.id} ></Card>
+                                <Card  id= {e.id} name={e.name} image = {e.image} continente ={e.continente}  population ={e.population} area={e.area} key={e.id} ></Card>
                             ))
                         }
 

@@ -2,7 +2,7 @@
 const initialState={
     countries:[],
     allCountries:[],
-    allActivities:[],
+    activities:[],
     detail:[]
 
 }
@@ -23,22 +23,34 @@ function rootReducer (state=initialState,action){
             }
         
         case 'FILTER_BY_ACTIVITIES':
-            const countriesAll = state.allCountries
-            const activityCountries = countriesAll?.map(country => {
-                return {...country, activities: country.activity.map(act => act.name)}
-            })
-            const activityFiltered = action.payload === 'all' ? countriesAll : activityCountries.filter(el => {
-                return el.activity.includes(action.payload)
-            })
-            return {
+            // const countriesAll = state.allCountries
+            // const activityCountries = countriesAll?.map(country => {
+            //     return {...country, activities: country.activity.map(act => act.name)}
+            // })
+            // const activityFiltered = action.payload === 'all' ? countriesAll : activityCountries.filter(el => {
+            //     return el.activity.includes(action.payload)
+            // })
+            // return {
+            //         ...state,
+            //         countries: activityFiltered
+            // }
+
+                 const array = []
+                 console.log("entre al filter")
+                state.allCountries.map(el => el.Activities.forEach(element => {
+                 if (element.name === action.payload) {
+                     array.push(el)
+                };
+                }));
+                console.log(array,'que tiene el array del filter activity')
+                return{
                     ...state,
-                    countries: activityFiltered
-            }
-        
+                    countries: array
+                };
         case 'GET_ACTIVITIES':
             return {
                 ...state,
-                allActivities: action.payload
+                activities: action.payload
             }
 
         case 'FILTER_BY_POPULATION':
@@ -94,6 +106,38 @@ function rootReducer (state=initialState,action){
                  detail: action.payload
 
              }
+
+         case 'CLEAN_DETAIL':
+             return {
+                 ...state,
+                 detail:[]
+                } 
+        case 'FILTER_AREA':
+            console.log(action.payload,'payload')
+            let mayormenor = action.payload === "mayor" ? 
+            state.countries.sort(function(a,b){
+                if(a.area > b.area){
+                    return 1;
+                    }
+                    if(b.area > a.area){
+                        return -1;
+                    }
+                    return 0;
+                }) :
+                state.countries.sort(function(a,b){
+                    if(a.area > b.area){
+                        return -1;
+                    }
+                    if(b.area > a.area){
+                        return 1;
+                    }
+                    return 0;
+                })
+                console.log(mayormenor)
+                return {
+                    ...state,
+                    countries: [...mayormenor]
+                }
         default:
             return state;
 

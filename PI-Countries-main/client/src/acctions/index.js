@@ -25,7 +25,9 @@ export function getActivities(){
     return async function(dispatch){
         try{
             var info = await axios.get ("http://localhost:3001/activities");
-            return dispatch ({
+            console.log(info,'lo que trae del get')
+            return dispatch ({ 
+                
                 type: "GET_ACTIVITIES",
                 payload: info.data
             })
@@ -60,6 +62,7 @@ export function postActividad(payload) {
         axios.post("http://localhost:3001/activities", payload);
         return dispatch({
             type : 'POST_ACTIVIDAD',
+            
            
         })
         // console.log(json)
@@ -85,10 +88,28 @@ export function getDetail(id) {
     return async function (dispatch) {
         try{
             var json = await axios.get("http://localhost:3001/countries/"+id)
+            console.log(json)
             return  dispatch({
                 type: 'GET_DETAIL',
                 payload : json.data
             });
         }catch(e){
         console.log(e);
-}}};
+        }
+    }
+};
+
+export function cleanDetail(){
+    return function(dispatch){
+        return dispatch({
+            type:'CLEAN_DETAIL',
+        })
+    }
+}
+export function filterByArea(payload){
+    console.log(payload,'lo que recibe el filter')
+    return{
+        type: 'FILTER_AREA',
+        payload:payload
+    }
+}

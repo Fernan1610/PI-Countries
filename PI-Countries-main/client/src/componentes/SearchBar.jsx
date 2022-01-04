@@ -17,6 +17,7 @@ export default function SearchBar(){
         e.preventDefault();
         if (name !== ""){
             console.log("entre al handle")
+            document.getElementById("inputSearch").value="";
             dispatch(searchByName(name));
             setName("");
           } else {
@@ -26,7 +27,7 @@ export default function SearchBar(){
     return(
         <div>
             <form action="" onSubmit= {e=> handleSubmit(e)} className={style.searchForm}>
-                <input type = 'text' placeholder = "Buscar..." onChange= {e=>handleInputChange(e)} ></input>
+                <input  id= "inputSearch" type = 'text' placeholder = "Buscar..." onChange= {e=>handleInputChange(e)} ></input>
                 <button type = 'submit' className={style.searchButton}>Buscar</button>
 
             </form>

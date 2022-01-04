@@ -6,27 +6,28 @@ const axios =require('axios').default;
 const {Country ,Activity  }= require ("../db.js");
 
 const router = Router();
+const {getApiInfo}=require("./controler.js")
 
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
-const getApiInfo=async()=>{
-    const apiUrl= await axios.get('https://restcountries.com/v3/all');
-    const apiInfo= await apiUrl.data.map(el =>{
-        return {
-            id: el.cca3,
-            name: el.name.common,
-            image: el.flags.find((e)=>e.includes('svg')),  
-            continente: el.region,
-            capital: el.capital,
-            subregion: el.subregion,
-            area: el.area,
-            population: el.population,
+// const getApiInfo=async()=>{
+//     const apiUrl= await axios.get('https://restcountries.com/v3/all');
+//     const apiInfo= await apiUrl.data.map(el =>{
+//         return {
+//             id: el.cca3,
+//             name: el.name.common,
+//             image: el.flags.find((e)=>e.includes('svg')),  
+//             continente: el.region,
+//             capital: el.capital,
+//             subregion: el.subregion,
+//             area: el.area,
+//             population: el.population,
             
-        };
-    });
+//         };
+//     });
     
-    return apiInfo;
-}
+//     return apiInfo;
+// }
 
 
 const getDbInfo =async()=>{
@@ -48,11 +49,11 @@ const getAllCountry = async ()=>{
     return infoTotal;
 } 
 
-router.get('/countries', async (req,res)=>{
-    const {name}= req.query;
-    let countriesTotal = await getAllCountry();
+router.get('/countries', async (req,res,next)=>{
+    const name= req.query.name;
+    //let countriesTotal = await getAllCountry();
     if(name){
-      const countryName = await countriesTotal.filter(el=>el.name.toLowerCase().includes(name.toLowerCase()))
+     // const countryName = await countriesTotal.filter(el=>el.name.toLowerCase().includes(name.toLowerCase()))
       //const contriesActivities=countryName.concat(getDbInfo)
       // const countryName = await countriesTotal.findAll({
       //   include: Activity,
@@ -64,33 +65,67 @@ router.get('/countries', async (req,res)=>{
       //   }
       // })
       
-      countryName.length
-        ? res.status(200).send(countryName)
-        : res.status(404).send("The country with that name was not found");
-    
+      // countryName.length
+      //   ? res.status(200).send(countryName)
+      //   : res.status(404).send("The country with that name was not found");
+      try{
+        let countriQuery = await Country.findAll({
+          include: Activity,
+          where:{
+              name:{
+                  [Op.iLike]: '%' + name +'%'}}})
+        if(!countriQuery.length){
+          return res.status(404).json('No se encontro el pais buscado')
+        }else{
+          return res.send(countriQuery)
+        }
+
+      }catch(error){
+        next(error)
+      }
       
 
     }else{
-     
-        res.status(200).send(countriesTotal);
+        try{
+          const paisesEnDB =await Country.findAll({
+            include:{model:Activity}
+          })
+          return res.json(paisesEnDB)
+        }catch(error){
+          next(error)
+        }
     }
 });
 
-router.get("/countries/:id", async (req, res) => {
-    const { id } = req.params;
+// router.get("/countries/:id", async (req, res) => {
+//     const { id } = req.params;
     
-    try {
-      let countryById = await getApiInfo();
-      let resultById =countryById.filter(el => el.id.toLowerCase()===(id.toLowerCase()));
+//     try {
+//       let countryById = await getAllCountry();
+//       let resultById =countryById.filter(el => el.id.toLowerCase()===(id.toLowerCase()));
       
-      resultById.length?
-        res.status(200).send(resultById):
-        res.status(404).send("error");
-    } catch (error) {
-      res.status(400).send(error);
-    }
-  });
+//       resultById.length?
+//         res.status(200).send(resultById):
+//         res.status(404).send("error");
+//     } catch (error) {
+//       res.status(400).send(error);
+//     }
+//   });
+  router.get('/countries/:id', async (req,res) => {
+    // Obtener el detalle de un país en particular
+    // Debe traer solo los datos pedidos en la ruta de detalle de país
+    // Incluir los datos de las actividades turísticas correspondientes
 
+    const countryId = req.params.id
+
+    let countryById = await Country.findByPk(countryId, {
+        include : {
+            model : Activity
+        }
+    })
+
+    res.status(200).send(countryById)
+})
 //   router.get("/countries/name", async (req, res) => {
 //     const { name } = req.query.name;
     
@@ -106,6 +141,7 @@ router.get("/countries/:id", async (req, res) => {
 
 router.post("/activities", async (req, res ,next) => {
   let { name, dificultad, duration, season, countries } = req.body;
+  console.log(req.body)
   try{
     if(name && dificultad&& duration && season){
 
@@ -119,16 +155,19 @@ router.post("/activities", async (req, res ,next) => {
   
        try{
           
-         let countriesBody =await Country.findAll({
-           where:{name: countries}
+         let countriesBody = await Country.findAll({
+           where:{id: countries,
+           }
          })
+         console.log(countriesBody)
       
          activityAdd.addCountry(countriesBody)
+         console.log(activityAdd)
          res.status(200).send("Se creo la Actividad con exito")
        }catch(error){
-         
+         console.log(error)
         res.status(404).send("Entre a cargar pero no encontre country")
-       }
+       };
   
     }else{
       res.status(404).send("Error no ingresaste los campos correctamente")
@@ -136,52 +175,22 @@ router.post("/activities", async (req, res ,next) => {
 
   }catch (error){
     next(error)
-  }
+  };
+  
 });
-  // try {
-  
-  //   for (const i of countries) {
-  //     const country = await Country.findOne({
-  //       where: {
-  //         i: i,
-  //       },
-  //     });
-  //   }
-  //   // countries.forEach(async(el) => {
-  //   //   let activityCountry= await Country.findOne({
-  //   //     where: {
-  //   //       name : countries
-  //   //     }
-  //   //   })
-  //   //   await activityAdd.addCountry(activityCountry);
-  //   // });
-  
-  
-  //   res.status(200).send("se Creo Actividad")
-  // } catch (error) {
-    
-  //   console.log(error);
-  //   res.status(500).json({ message: "Error" });
-  // }
+ 
 
-
-
-router.get("/activities", async (req, res) => {
-  try {
-    const activities = await Activity.findAll({
-      include: {
-        model: Country,
-        attributes: ["name"],
-        through: {
-          attributes: [],
-        },
-      },
-    });
-      return res.json(activities);
-    } catch (error) {
-      res.status(400).send("Something went wrong");
-    }
-  });
+router.get('/activities', async(req, res, next) => {
+  return Activity.findAll({})
+  .then((actividadesCreadas) => {
+      res.json(actividadesCreadas)
+  })
+  .catch((error) => {
+      next(error)
+  }) 
+  // const tuReturn=await Activity.findAll({})
+  // res.send(tuReturn)
+})
   
   
   module.exports = router;
